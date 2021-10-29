@@ -127,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+bdd/sqlite3_analyzer.exe
+bdd/sqldiff.exe

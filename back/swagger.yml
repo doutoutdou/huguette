@@ -1,0 +1,60 @@
+swagger: "2.0"
+info:
+  description: This is the swagger file that goes with our server code
+  version: "1.0.0"
+  title: Swagger REST Article
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+
+basePath: "/api"
+
+# Paths supported by the server application
+paths:
+  /reservation:
+    get:
+      operationId: "reservation.read_all"
+      tags:
+        - "reservation"
+      summary: "The reservation data structure supported by the server application"
+      description: "Read the list of reservations"
+      responses:
+        200:
+          description: "Successful read reservation list operation"
+          schema:
+            type: "array"
+            items:
+              properties:
+                id:
+                  type: "integer"
+                day:
+                  type: "string"
+                booked:
+                  type: "boolean"
+  /reservation/{id}:
+    get:
+      operationId: "reservation.read"
+      tags:
+        - "reservation"
+      summary: "The reservation data structure supported by the server application"
+      description: "Read a reservation"
+      parameters:
+        - name: id
+          in: path
+          description: reservation id
+          type: integer
+          required: True
+      responses:
+        200:
+          description: "Successful read reservation operation"
+          schema:
+            type: "array"
+            items:
+              properties:
+                id:
+                  type: "integer"
+                day:
+                  type: "string"
+                booked:
+                  type: "boolean"
