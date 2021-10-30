@@ -1,16 +1,16 @@
 from datetime import datetime
 from flask import make_response, abort, jsonify
-import sqlite3
 import json
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, post_load
+from sqlalchemy import create_engine, Table, Column, Integer, String, MetaData, text
+from sqlalchemy.sql.sqltypes import Boolean
 
 def get_timestamp():
     return datetime.now().strftime(("%Y-%m-%d %H:%M:%S"))
 
 def get_db_connection():
-    conn = sqlite3.connect('../bdd/beerzone.db')
-    conn.row_factory = sqlite3.Row
-    return conn
+    engine = create_engine('sqlite:///../bdd/beerzone.db', echo = True)
+    return engine.connect()
 
 class Reservation:
     def __init__(self, id, day, booked):
@@ -56,19 +56,59 @@ def read_all():
     # Create the list of people from our data
     #return [RESERVATION[key] for key in sorted(RESERVATION.keys())]
     conn = get_db_connection()
-    cursor = conn.cursor()
-    reservation = cursor.execute('SELECT * from reservation').fetchone()[1]
+    meta = MetaData()
+
+    class Reservation:
+        def __init__(self, id, day, booked):
+            self.id = id
+            self.day = day
+            self.booked = booked
+
+        def __repr__(self):
+            return "<Reservation(id={self.id!r})>".format(self=self)
+            
+    reservations = Table(
+        'reservation', meta, 
+        Column('id', Integer, primary_key = True), 
+        Column('day', String), 
+        Column('booked', Boolean), 
+    )
+
+    class ReservationSchema(Schema):
+        id = fields.Int()
+        day = fields.Str()
+        booked = fields.Bool()
+
+        @post_load
+        def make_user(self, data, **kwargs):
+            return Reservation(**data)
+
+    request = text("SELECT * from reservation where id = '1'")
+    result = conn.execute(request)
+
+#    cursor = conn.cursor()
+#    reservation = cursor.execute('SELECT * from reservation where ').fetchone()[1]
     #rows = cursor.fetchall()
 
-#    for row in reservation:
-#        print(row)
+    #print(result.fetchone())
+    #for row in result:
+    #    print(row)
 
+    schema = ReservationSchema(many=True)
+    jsonResult = schema.dump(result)
+    for row in jsonResult:
+        print(row)
+    #    swagger = row
+
+    #print(jsonResult)
     # schema = ReservationSchema()
     #result = schema.dump(reservation)
     #print(reservation)
     #conn.close
 
-    return reservation
+    #results = [list(row) for row in result]
+    #result_dict = {'results': results}
+    return jsonResult
 
 def read(id):
     if id in RESERVATION:
