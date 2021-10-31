@@ -56,6 +56,7 @@ def read_all():
     schema = ReservationSchema(many=True)
     jsonResult = schema.dump(result)
 
+    print("toto")
     return jsonResult
 
 def read(id):

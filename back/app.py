@@ -3,6 +3,7 @@ from flask import (
 )
 # Connexion est un fwk au dessus de flask (https://connexion.readthedocs.io/en/latest/)
 import connexion
+from flask_cors import CORS
 
    
 # Create the application instance
@@ -10,6 +11,9 @@ app = connexion.App(__name__, specification_dir='./')
 
 # Read the swagger.yml file to configure the endpoints
 app.add_api('swagger.yml')
+
+# cors support
+CORS(app.app)
 
 # Create a URL route in our application for "/"
 @app.route('/')
