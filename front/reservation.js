@@ -11,81 +11,109 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var e = React.createElement;
 
 var Reservation = function (_React$Component) {
-    _inherits(Reservation, _React$Component);
+  _inherits(Reservation, _React$Component);
 
-    function Reservation(props) {
-        _classCallCheck(this, Reservation);
+  function Reservation(props) {
+    _classCallCheck(this, Reservation);
 
-        var _this = _possibleConstructorReturn(this, (Reservation.__proto__ || Object.getPrototypeOf(Reservation)).call(this, props));
+    var _this = _possibleConstructorReturn(this, (Reservation.__proto__ || Object.getPrototypeOf(Reservation)).call(this, props));
 
-        _this.state = {
-            error: null,
-            isLoaded: false,
-            items: []
-        };
-        return _this;
+    _this.state = {
+      error: null,
+      isLoaded: false,
+      items: []
+    };
+    return _this;
+  }
+
+  _createClass(Reservation, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      var _this2 = this;
+
+      fetch("http://localhost:5000/api/reservation").then(function (res) {
+        return res.json();
+      }).then(function (result) {
+        _this2.setState({
+          isLoaded: true,
+          items: result
+        });
+      }, function (error) {
+        _this2.setState({
+          isLoaded: true,
+          error: error
+        });
+      });
     }
+  }, {
+    key: "render",
+    value: function render() {
+      var _state = this.state,
+          error = _state.error,
+          isLoaded = _state.isLoaded,
+          items = _state.items;
 
-    _createClass(Reservation, [{
-        key: "componentDidMount",
-        value: function componentDidMount() {
-            var _this2 = this;
+      if (error) {
+        return React.createElement(
+          "div",
+          null,
+          "Erreur : tptp"
+        );
+      } else if (!isLoaded) {
+        return React.createElement(
+          "div",
+          null,
+          "Chargement\u2026"
+        );
+      } else {
+        return (
+          // <ul>
+          //   {items.map(item => (
+          //     <li key={item.id}>
+          //       {item.id} {item.day}
+          //     </li>
+          //   ))}
+          // </ul>
+          React.createElement(
+            "form",
+            { onSubmit: this.handleSubmit },
+            React.createElement(
+              "label",
+              null,
+              "Choisissez votre parfum favori :",
+              React.createElement(
+                "select",
+                { value: this.state.value, onChange: this.handleChange },
+                React.createElement(
+                  "option",
+                  { value: "grapefruit" },
+                  "Pamplemousse"
+                ),
+                React.createElement(
+                  "option",
+                  { value: "lime" },
+                  "Citron vert"
+                ),
+                React.createElement(
+                  "option",
+                  { value: "coconut" },
+                  "Noix de coco"
+                ),
+                React.createElement(
+                  "option",
+                  { value: "mango" },
+                  "Mangue"
+                )
+              )
+            ),
+            React.createElement("input", { type: "submit", value: "Envoyer" })
+          )
+        );
+      }
+    }
+  }]);
 
-            console.log("toto");
-            fetch("http://localhost:5000/api/reservation").then(function (res) {
-                return res.json();
-            }).then(function (result) {
-                _this2.setState({
-                    isLoaded: true,
-                    items: result
-                });
-            }, function (error) {
-                _this2.setState({
-                    isLoaded: true,
-                    error: error
-                });
-            });
-        }
-    }, {
-        key: "render",
-        value: function render() {
-            var _state = this.state,
-                error = _state.error,
-                isLoaded = _state.isLoaded,
-                items = _state.items;
-
-            if (error) {
-                return React.createElement(
-                    "div",
-                    null,
-                    "Erreur : tptp"
-                );
-                return React.createElement("div", null, "Erreur : erreur ");
-            } else if (!isLoaded) {
-                return React.createElement(
-                    "div",
-                    null,
-                    "Chargement\u2026"
-                );
-            } else {
-                return React.createElement(
-                    "ul",
-                    null,
-                    items.map(function (item) {
-                        return React.createElement(
-                            "li",
-                            { key: item.id },
-                            item.id,
-                            " ",
-                            item.day
-                        );
-                    })
-                );
-            }
-        }
-    }]);
-
-    return Reservation;
+  return Reservation;
 }(React.Component);
 
 var domContainer = document.querySelector('#like_button_container');
