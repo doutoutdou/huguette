@@ -12,11 +12,11 @@ basePath: "/api"
 
 # Paths supported by the server application
 paths:
-  /reservation:
+  /reservations:
     get:
-      operationId: "reservation.read_all"
+      operationId: "reservations.get"
       tags:
-        - "reservation"
+        - "reservations"
       summary: "The reservation data structure supported by the server application"
       description: "Read the list of reservations"
       responses:
@@ -32,11 +32,11 @@ paths:
                   type: "string"
                 booked:
                   type: "boolean"
-  /reservation/{id}:
+  /reservations/{id}/orders:
     get:
-      operationId: "reservation.read"
+      operationId: "reservations.getOrders"
       tags:
-        - "reservation"
+        - "reservations"
       summary: "The reservation data structure supported by the server application"
       description: "Read a reservation"
       parameters:
