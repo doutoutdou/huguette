@@ -133,4 +133,4 @@ bdd/sqldiff.exe
 
 .vscode
 
-node_modules
+**node_modules**

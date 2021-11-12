@@ -24,7 +24,7 @@ def get():
     conn = get_db_connection()
     meta = MetaData()
 
-    reservations = Table(
+    reservations     = Table(
         'reservation', meta,
         Column('id', Integer, primary_key=True),
         Column('day', String),
@@ -71,5 +71,6 @@ def getOrders(id):
     schema = OrderSchema(many=True)
     jsonResult = schema.dump(result)
 
+    print(jsonResult)
     return jsonResult
 
