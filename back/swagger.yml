@@ -14,7 +14,7 @@ basePath: "/api"
 paths:
   /reservations:
     get:
-      operationId: "reservations.get"
+      operationId: "reservations.get_reservations"
       tags:
         - "reservations"
       summary: "The reservation data structure supported by the server application"
@@ -32,13 +32,48 @@ paths:
                   type: "string"
                 booked:
                   type: "boolean"
-  /reservations/{id}/orders:
-    get:
-      operationId: "reservations.getOrders"
+    post:
+      operationId: "reservations.create_reservation"
       tags:
         - "reservations"
       summary: "The reservation data structure supported by the server application"
-      description: "Read a reservation"
+      description: "Create a new reservation"
+      parameters:
+        - in : query
+          name: day
+          type: string
+          description: the reservation date
+          required: true
+      responses:
+        201:
+          description: "if operation is a success"
+          schema:
+            type: "string"
+  /reservations/{id}:
+    delete:
+      operationId: "reservations.delete_reservation"
+      tags:
+        - "reservations"
+      summary: "The reservation data structure supported by the server application"
+      description: "delete a reservation"
+      parameters:
+        - in : path
+          name: id
+          type: integer
+          description: the order id
+          required: true
+      responses:
+        204:
+          description: "if operation is a success"
+          schema:
+            type: "string"
+  /reservations/{id}/orders:
+    get:
+      operationId: "reservations.get_orders"
+      tags:
+        - "orders"
+      summary: "The order data structure supported by the server application"
+      description: "Read all orders for this reservation"
       parameters:
         - name: id
           in: path
@@ -47,14 +82,59 @@ paths:
           required: True
       responses:
         200:
-          description: "Successful read reservation operation"
+          description: "Successful read orders operation"
           schema:
             type: "array"
             items:
               properties:
-                id:
+                reservation_id:
                   type: "integer"
-                day:
+                customer_name:
                   type: "string"
-                booked:
-                  type: "boolean"
+                customer_order:
+                  type: "string"
+    post:
+      operationId: "reservations.create_order"
+      tags:
+        - "orders"
+      summary: "The order data structure supported by the server application"
+      description: "Create a new order"
+      parameters:
+        - in : path
+          name: id
+          type: integer
+          description: the reservation id
+          required: true
+        - in : query
+          name: customer_name
+          type: string
+          description: the customer_name
+          required: true
+        - in : query
+          name: customer_order
+          type: string
+          description: the customer_order
+          required: true
+      responses:
+        201:
+          description: "if operation is a success"
+          schema:
+            type: "string"
+  /orders/{id}:
+    delete:
+      operationId: "reservations.delete_order"
+      tags:
+        - "orders"
+      summary: "The order data structure supported by the server application"
+      description: "delete an order"
+      parameters:
+        - in : path
+          name: id
+          type: integer
+          description: the order id
+          required: true
+      responses:
+        204:
+          description: "if operation is a success"
+          schema:
+            type: "string"
