@@ -1,6 +1,7 @@
 import logo from './beer.svg';
 import React from 'react';
 import Select from 'react-select';
+import CreatableSelect from 'react-select/creatable';
 import { useTable, useSortBy } from 'react-table'
 import './App.css';
 import MaUTable from '@material-ui/core/Table'
@@ -24,11 +25,11 @@ function App() {
           Carte repas
         </a>
       </header>
-        <div>
-          <Reservation />
+      <div>
+        <Reservation />
 
-        </div>
-       
+      </div>
+
     </div>
   );
 }
@@ -54,9 +55,9 @@ function Table(props) {
   )
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable(
-    { 
-      columns, 
-      data 
+    {
+      columns,
+      data
     },
     useSortBy
   )
@@ -79,8 +80,8 @@ function Table(props) {
               >
                 {column.render('Header')}
                 <span>
-+                 {column.isSorted ? (column.isSortedDesc ? ' 🔽' : ' 🔼') : ''}
-+               </span>
+                  +                 {column.isSorted ? (column.isSortedDesc ? ' 🔽' : ' 🔼') : ''}
+                  +               </span>
               </TableHead>
             ))}
           </TableRow>
@@ -121,6 +122,7 @@ class Reservation extends React.Component {
       isReservationLoaded: false,
       reservations: [],
       selectedOption: null,
+      isLoading: false
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -128,6 +130,10 @@ class Reservation extends React.Component {
 
   handleChange(event) {
     this.setState({ selectedOption: event });
+  }
+
+  handleCreate(event) {
+    console.log("createInProgress")
   }
 
   handleSubmit(event) {
@@ -159,27 +165,75 @@ class Reservation extends React.Component {
 
 
   render() {
-    const { error, isReservationLoaded, reservations, selectedOption } = this.state;
+    const { error, isReservationLoaded, reservations, selectedOption, isLoading } = this.state;
     if (error) {
       return <div>Ooops pas de chance une erreur est survenue</div>;
     } else if (!isReservationLoaded) {
       return (<div>Loading...</div>);
     } else if (isReservationLoaded) {
       return (
-        <div>
-          <p> Jour de la réservation </p>
-          <Select
+        <div className="reservation-select">
+          <label htmlFor="select">Choisis ton jour </label>
+          <CreatableSelect
+            className="reservation-select--container"
+            id="select"
+            isClearable
+            isDisabled={isLoading}
+            isLoading={isLoading}
             value={selectedOption}
+            onCreateOption={this.handleCreate}
             onChange={this.handleChange}
             options={reservations}
           />
           <Orders id={selectedOption} />
         </div>
 
+
       );
     }
   }
 }
+
+class Order extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      error: null
+    };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChange(event) {
+
+    this.setState({ selectedOption: event });
+
+  }
+
+  handleSubmit(event) {
+    this.setState({ value: event.target.value });
+    // Trouver comment chainer l'appel pour retrouver une liste
+    event.preventDefault();
+
+  }
+
+
+
+
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <label>
+          Nom :
+          <input type="text" value={this.state.value} onChange={this.handleChange} />        </label>
+        <input type="submit" value="Envoyer" />
+      </form>
+    )
+  }
+}
+
+
+
 
 class Orders extends React.Component {
   constructor(props) {
@@ -195,7 +249,7 @@ class Orders extends React.Component {
   }
 
   handleChange(event) {
-    this.setState(console.dir(event));
+    // this.setState(console.dir(event));
 
     this.setState({ selectedOption: event });
 
@@ -206,7 +260,6 @@ class Orders extends React.Component {
 
     // Trouver comment chainer l'appel pour retrouver une liste
     event.preventDefault();
-
 
   }
 
@@ -236,6 +289,10 @@ class Orders extends React.Component {
   }
 
 
+  addLine() {
+    console.log("toto")
+  }
+
 
   render() {
     const { error, isOrdersLoaded, orders } = this.state;
@@ -249,7 +306,10 @@ class Orders extends React.Component {
 
         return (<div>Loading...</div>);
       } else if (isOrdersLoaded) {
-        return <Table orders={orders} />
+        return (
+          <React.Fragment><Table orders={orders} />
+            <button onClick={this.addLine}> Activer les lasers</button></React.Fragment>
+        )
       }
     }
   }
