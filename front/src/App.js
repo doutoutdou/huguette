@@ -122,22 +122,27 @@ class Reservation extends React.Component {
       isReservationLoaded: false,
       reservations: [],
       selectedOption: null,
-      isLoading: false
+      // isLoading: false
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleCreate = this.handleCreate.bind(this);
   }
 
   handleChange(event) {
     this.setState({ selectedOption: event });
   }
 
-  handleCreate(event) {
-    console.log("createInProgress")
+  async handleCreate(value) {
+    const requestOptions = {
+      method: 'POST'
+    };
+    const response = await fetch(`http://localhost:5000/api/reservations?day=${encodeURIComponent(value)}`, requestOptions)
+    this.getReservations()
+
   }
 
   handleSubmit(event) {
-
   }
 
   getReservations() {
@@ -163,9 +168,13 @@ class Reservation extends React.Component {
     this.getReservations()
   }
 
+  componentDidUpdate(prevProps) {
+    // this.getReservations()
+  }
+
 
   render() {
-    const { error, isReservationLoaded, reservations, selectedOption, isLoading } = this.state;
+    const { error, isReservationLoaded, reservations, selectedOption } = this.state;
     if (error) {
       return <div>Ooops pas de chance une erreur est survenue</div>;
     } else if (!isReservationLoaded) {
@@ -178,8 +187,6 @@ class Reservation extends React.Component {
             className="reservation-select--container"
             id="select"
             isClearable
-            isDisabled={isLoading}
-            isLoading={isLoading}
             value={selectedOption}
             onCreateOption={this.handleCreate}
             onChange={this.handleChange}
@@ -187,53 +194,10 @@ class Reservation extends React.Component {
           />
           <Orders id={selectedOption} />
         </div>
-
-
       );
     }
   }
 }
-
-class Order extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      error: null
-    };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
-  handleChange(event) {
-
-    this.setState({ selectedOption: event });
-
-  }
-
-  handleSubmit(event) {
-    this.setState({ value: event.target.value });
-    // Trouver comment chainer l'appel pour retrouver une liste
-    event.preventDefault();
-
-  }
-
-
-
-
-  render() {
-    return (
-      <form onSubmit={this.handleSubmit}>
-        <label>
-          Nom :
-          <input type="text" value={this.state.value} onChange={this.handleChange} />        </label>
-        <input type="submit" value="Envoyer" />
-      </form>
-    )
-  }
-}
-
-
-
 
 class Orders extends React.Component {
   constructor(props) {
@@ -246,6 +210,7 @@ class Orders extends React.Component {
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleCreate = this.handleCreate.bind(this);
   }
 
   handleChange(event) {
@@ -260,6 +225,17 @@ class Orders extends React.Component {
 
     // Trouver comment chainer l'appel pour retrouver une liste
     event.preventDefault();
+
+  }
+
+  async handleCreate(value) {
+    let customer_name = "doudou";
+    let customer_order = "pizza";
+    const requestOptions = {
+      method: 'POST'
+    };
+    await fetch(`http://localhost:5000/api/reservations/${encodeURIComponent(this.props.id["value"])}/orders?customer_name=${encodeURIComponent(customer_name)}&customer_order=${encodeURIComponent(customer_order)}`, requestOptions)
+    this.getOrders()
 
   }
 
@@ -308,7 +284,7 @@ class Orders extends React.Component {
       } else if (isOrdersLoaded) {
         return (
           <React.Fragment><Table orders={orders} />
-            <button onClick={this.addLine}> Activer les lasers</button></React.Fragment>
+            <button onClick={this.handleCreate}> Activer les lasers</button></React.Fragment>
         )
       }
     }
