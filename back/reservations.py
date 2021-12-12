@@ -1,12 +1,12 @@
 from datetime import datetime
-from flask import make_response, abort, jsonify
-import json
+# from flask import make_response, abort, jsonify
+# import json
 from marshmallow import Schema, fields, post_load
 from sqlalchemy import create_engine, event, Table, Column, Integer, String, MetaData, text, select
 from sqlalchemy.sql.expression import false
 from sqlalchemy.sql.sqltypes import Boolean
 from sqlalchemy.engine import Engine
-
+import datetime
 
 # Necessaire pour gérer les FK avec sqlite
 # Voir https://docs.sqlalchemy.org/en/14/dialects/sqlite.html#foreign-key-support
@@ -21,6 +21,11 @@ def get_db_connection():
 
     return engine.connect()
 
+def validate_date(date_text):
+    try:
+        datetime.datetime.strptime(date_text, '%d-%m-%Y')
+    except ValueError:
+        raise ValueError("Incorrect data format, should be DD-MM-YYYY")
 
 class ReservationSchema(Schema):
     id = fields.Int()
@@ -74,6 +79,7 @@ def get_reservations():
 
 def create_reservation(day):
 
+    validate_date(day)
     conn = get_db_connection()
 
     reservations = reservation_table()
