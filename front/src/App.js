@@ -9,6 +9,7 @@ import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
+import MaterialTable from "material-table";
 
 
 function App() {
@@ -25,8 +26,12 @@ function App() {
           Carte repas
         </a>
       </header>
-      <div>
+      <div className="col-md-12">
         <Reservation />
+
+      </div>
+      <div className="footer">
+
 
       </div>
 
@@ -63,7 +68,28 @@ function Table(props) {
   )
 
   return (
-
+    // <MaterialTable
+    // columns={[
+    //   { title: "Adı", field: "name" },
+    //   { title: "Soyadı", field: "surname" },
+    //   { title: "Doğum Yılı", field: "birthYear", type: "numeric" },
+    //   {
+    //     title: "Doğum Yeri",
+    //     field: "birthCity",
+    //     lookup: { 34: "İstanbul", 63: "Şanlıurfa" },
+    //   },
+    // ]}
+    //   data={[
+    //     {
+    //       name: "Mehmet",
+    //       surname: "Baran",
+    //       birthYear: 1987,
+    //       birthCity: 63,
+    //     },
+    //   ]}
+    //   title="Demo Title"
+    // />
+  
     <MaUTable {...getTableProps()} style={{ border: 'solid 1px blue' }}>
       <TableHead>
         {headerGroups.map(headerGroup => (
@@ -284,6 +310,18 @@ class Orders extends React.Component {
       } else if (isOrdersLoaded) {
         return (
           <React.Fragment><Table orders={orders} />
+           
+    <label for="uname"><b>Username</b></label>
+    {/* <input type="text" placeholder="Enter Username" name="uname" required> */}
+
+    <label for="psw"><b>Password</b></label>
+    <input type="password" placeholder="Enter Password" name="psw" required/>
+
+    <button type="submit">Login</button>
+    <label>
+      <input type="checkbox" checked="checked" name="remember"/>
+    </label>
+  
             <button onClick={this.handleCreate}> Activer les lasers</button></React.Fragment>
         )
       }
